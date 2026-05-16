@@ -51,8 +51,6 @@ export const getSteamPlaytimeBySlug = cache(async (): Promise<Partial<Record<str
 
 function formatSteamPlaytime(playtimeMinutes: number): string {
   const h = Math.floor(playtimeMinutes / 60);
-  const m = playtimeMinutes % 60;
-  if (h < 1) return `${m} min (Steam)`;
-  if (m === 0) return `${h.toLocaleString("sv-SE")} timmar (Steam)`;
-  return `${h.toLocaleString("sv-SE")} h ${m} min (Steam)`;
+  if (h < 1) return "Under 1 timme";
+  return `${h.toLocaleString("sv-SE")} timmar`;
 }

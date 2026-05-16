@@ -286,7 +286,7 @@ export const gamingGames: GamingGame[] = [
     image: "/gaming/covers/gray-zone-warfare.png?cb=2",
     imageAlt: "Gray Zone Warfare — omslag med soldat i djungel, vit logotyp till vänster",
     tags: ["FPS", "Taktik", "Steam"],
-    steamAppId: 2457640,
+    steamAppId: 2479810,
     playtime: "130+ timmar",
     settingsSections: [
       {
