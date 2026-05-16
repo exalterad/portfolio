@@ -19,6 +19,7 @@ import type { PortfolioProject } from "@/lib/projects";
 type PortfolioShellProps = {
   projects: PortfolioProject[];
   about: PortfolioAboutContent;
+  steamPlaytimes?: Partial<Record<string, string>>;
   isAdmin?: boolean;
   isLoggedIn?: boolean;
   navUser?: NavSessionUser | null;
@@ -28,6 +29,7 @@ type PortfolioShellProps = {
 export function PortfolioShell({
   projects,
   about,
+  steamPlaytimes = {},
   isAdmin = false,
   isLoggedIn = false,
   navUser = null,
@@ -40,7 +42,7 @@ export function PortfolioShell({
         <HeroSection />
         <AboutSection content={about} isAdmin={isAdmin} supabaseConfigured={supabaseConfigured} />
         <ExperienceTimelineSection />
-        <GamingSection />
+        <GamingSection steamPlaytimes={steamPlaytimes} />
         <SetupSection />
         <SocialSection />
         <SkillsSection />

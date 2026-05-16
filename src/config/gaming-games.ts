@@ -34,7 +34,9 @@ export type GamingGame = {
   image: string;
   imageAlt: string;
   tags: string[];
-  /** Total speltid på gaming-kortet under titeln. */
+  /** Steam store app-id — hämtar speltid via Web API om STEAM_WEB_API_KEY + STEAM_ID finns. */
+  steamAppId?: number;
+  /** Total speltid på gaming-kortet under titeln (reserv om Steam saknas). */
   playtime: string;
   /** Valfri rad som hero (Status / Age / Base): tre kolumner med label + stort värde. */
   heroStats?: { label: string; value: string }[];
@@ -52,6 +54,7 @@ export const gamingGames: GamingGame[] = [
     image: "/gaming/covers/counter-strike-2.png?cb=4",
     imageAlt: "Counter-Strike 2 — liggande omslag med CT- och T-figurer, diagonal bakgrund och logotyp längst ner",
     tags: ["FPS", "Competitive", "Steam"],
+    steamAppId: 730,
     playtime: "2700+ timmar",
     heroStats: [
       { label: "Faceit", value: "Level 10" },
@@ -186,6 +189,7 @@ export const gamingGames: GamingGame[] = [
     image: "/gaming/covers/red-dead-redemption-2.png?cb=3",
     imageAlt: "Red Dead Redemption 2 — omslag med gäng i siluett mot sol och röd bakgrund med titel",
     tags: ["Singleplayer", "Berättelse", "Rockstar"],
+    steamAppId: 1174180,
     playtime: "50+ timmar",
     settingsSections: [
       {
@@ -218,6 +222,7 @@ export const gamingGames: GamingGame[] = [
     image: "/gaming/covers/hogwarts-legacy.png?cb=2",
     imageAlt: "Hogwarts Legacy — omslag med elev mot slottsdal, gyllene titel, drake och uggla i skyn",
     tags: ["RPG", "Harry Potter", "Singleplayer"],
+    steamAppId: 990080,
     playtime: "90+ timmar",
     settingsSections: [
       {
@@ -249,6 +254,7 @@ export const gamingGames: GamingGame[] = [
     image: "/gaming/covers/a-way-out.png?cb=2",
     imageAlt: "A Way Out — omslag med två protagonister rygg mot rygg, stängsel, strålkastare och gul titel",
     tags: ["Co-op", "Split screen", "EA Originals"],
+    steamAppId: 1222700,
     playtime: "6+ timmar",
     settingsSections: [
       {
@@ -280,6 +286,7 @@ export const gamingGames: GamingGame[] = [
     image: "/gaming/covers/gray-zone-warfare.png?cb=2",
     imageAlt: "Gray Zone Warfare — omslag med soldat i djungel, vit logotyp till vänster",
     tags: ["FPS", "Taktik", "Steam"],
+    steamAppId: 2457640,
     playtime: "130+ timmar",
     settingsSections: [
       {
@@ -312,6 +319,7 @@ export const gamingGames: GamingGame[] = [
     image: "/gaming/covers/grand-theft-auto-v.png?cb=1",
     imageAlt: "Grand Theft Auto V — omslag med kollage av karaktärer, fordon och Los Santos i Rockstars stil",
     tags: ["Action", "Online", "Rockstar"],
+    steamAppId: 271590,
     playtime: "300+ timmar",
     settingsSections: [
       {

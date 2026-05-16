@@ -8,6 +8,7 @@ import { site } from "@/config/site";
 import { CrosshairPreviewGrid } from "@/components/gaming/crosshair-preview-grid";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getGameBySlug, getGameSlugs } from "@/lib/gaming";
+import { getSteamPlaytimeBySlug } from "@/lib/steam-playtime";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -95,6 +96,8 @@ function GamingSettingsCard({ section }: { section: GamingSettingsSection }) {
   );
 }
 
+export const revalidate = 600;
+
 export async function generateStaticParams() {
   return getGameSlugs().map((slug) => ({ slug }));
 }
@@ -119,6 +122,9 @@ export default async function GamingGamePage({ params }: PageProps) {
   const game = getGameBySlug(slug);
   if (!game) notFound();
 
+  const steamPlaytimes = await getSteamPlaytimeBySlug();
+  const playtimeLabel = steamPlaytimes[slug] ?? game.playtime;
+
   const wideSections = game.settingsSections.filter((s) => s.previewGrid?.length);
   const restSections = game.settingsSections.filter((s) => !s.previewGrid?.length);
   const [leftCol, rightCol] = gamingSplitIntoTwoColumns(restSections, game.settingsSections);
@@ -137,7 +143,16 @@ export default async function GamingGamePage({ params }: PageProps) {
             <ArrowLeft className="size-4" />
             Tillbaka till Gaming
           </Link>
-          <h1 className="sr-only">{game.title}</h1>
+          <h1 className="mt-5 font-[family-name:var(--font-orbitron)] text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            {game.title}
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">{game.tagline}</p>
+          <p
+            className="mt-3 inline-flex w-fit rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1.5 text-xs font-medium tabular-nums tracking-wide text-muted-foreground"
+            aria-label={`Speltid: ${playtimeLabel}`}
+          >
+            {playtimeLabel}
+          </p>
         </div>
 
         {game.heroStats && game.heroStats.length > 0 ? (

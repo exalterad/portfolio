@@ -9,7 +9,11 @@ import { gamingGames } from "@/config/gaming-games";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 
-export function GamingSection() {
+type GamingSectionProps = {
+  steamPlaytimes?: Partial<Record<string, string>>;
+};
+
+export function GamingSection({ steamPlaytimes = {} }: GamingSectionProps) {
   return (
     <section id="gaming" className="relative scroll-mt-24 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -24,6 +28,7 @@ export function GamingSection() {
           {gamingGames.map((game, i) => {
             /** Lokala filer från /public — undvik /_next/image-cache som annars håller kvar gammal bitmap vid samma URL. */
             const coverUnoptimized = game.image.startsWith("/");
+            const playtimeLabel = steamPlaytimes[game.slug] ?? game.playtime;
             return (
             <ScrollReveal key={game.slug} delay={0.05 * i}>
               <motion.div
@@ -54,9 +59,9 @@ export function GamingSection() {
                       <CardTitle className="text-lg leading-snug">{game.title}</CardTitle>
                       <div
                         className="mt-2 inline-flex w-fit max-w-full items-center rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1.5 text-xs font-medium tabular-nums tracking-wide text-muted-foreground shadow-inner"
-                        aria-label={`Speltid: ${game.playtime}`}
+                        aria-label={`Speltid: ${playtimeLabel}`}
                       >
-                        {game.playtime}
+                        {playtimeLabel}
                       </div>
                     </CardHeader>
                   </Card>

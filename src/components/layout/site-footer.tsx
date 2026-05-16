@@ -30,7 +30,6 @@ export function SiteFooter() {
             >
               Logga in
             </Link>
-            <span className="text-muted-foreground"> (endast administratörer)</span>
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
