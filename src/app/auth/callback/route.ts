@@ -34,5 +34,17 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error.message)}`, origin));
   }
 
-  return NextResponse.redirect(`${origin}${next.startsWith("/") ? next : "/"}`);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.redirect(new URL("/login?error=no_user_after_oauth", origin));
+  }
+
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  const isAdmin = profile?.role === "admin";
+  const safeNext = next.startsWith("/") ? next : "/";
+  const path = isAdmin ? safeNext : "/ingen-admin";
+
+  return NextResponse.redirect(`${origin}${path}`);
 }

@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminEditAboutPage() {
   const { isAdmin } = await getAuthState();
-  if (!isAdmin) redirect("/login");
+  if (!isAdmin) redirect("/ingen-admin");
 
   const about = await getDisplayAbout();
 

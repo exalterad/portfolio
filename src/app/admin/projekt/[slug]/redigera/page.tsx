@@ -11,7 +11,7 @@ type PageProps = { params: Promise<{ slug: string }> };
 
 export default async function AdminEditProjectPage({ params }: PageProps) {
   const { isAdmin } = await getAuthState();
-  if (!isAdmin) redirect("/login");
+  if (!isAdmin) redirect("/ingen-admin");
 
   const { slug } = await params;
   const project = await getProjectBySlug(slug);

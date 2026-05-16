@@ -2,9 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LogIn, LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 
 import { signOutAction } from "@/app/(auth)/auth-actions";
 import { NavbarUserMenu } from "@/components/layout/navbar-user-menu";
@@ -22,10 +21,8 @@ type SiteNavbarProps = {
 };
 
 export function SiteNavbar({ isLoggedIn = false, isAdmin = false, navUser = null }: SiteNavbarProps) {
-  const pathname = usePathname();
   const active = useActiveSection(navIds);
   const [open, setOpen] = useState(false);
-  const onAuthRoute = pathname === "/login" || pathname === "/register";
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-white/5 bg-background/55 font-sans backdrop-blur-xl supports-[backdrop-filter]:bg-background/40">
@@ -68,18 +65,7 @@ export function SiteNavbar({ isLoggedIn = false, isAdmin = false, navUser = null
                 <LogOut className="size-5" aria-hidden />
               </button>
             </form>
-          ) : (
-            <Link
-              href="/login"
-              className={cn(
-                "inline-flex size-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-muted-foreground transition-colors hover:border-white/20 hover:bg-white/10 hover:text-foreground",
-                onAuthRoute && "border-primary/35 text-foreground shadow-[0_0_20px_rgba(168,85,247,0.2)]",
-              )}
-              aria-label="Logga in"
-            >
-              <LogIn className="size-5" aria-hidden />
-            </Link>
-          )}
+          ) : null}
           <button
             type="button"
             className="inline-flex size-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-foreground md:hidden"

@@ -18,11 +18,20 @@ export function SiteFooter() {
   return (
     <footer className="shrink-0 border-t border-white/10 bg-black/20 py-10">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 text-center sm:flex-row sm:text-left sm:px-6">
-        <div>
+        <div className="flex flex-col items-center sm:items-start">
           <p className="font-[family-name:var(--font-orbitron)] text-sm font-semibold tracking-wide text-foreground">
             {site.name}
           </p>
           <p className="mt-2 text-xs text-muted-foreground">© {year} {site.username}. Alla rättigheter förbehållna.</p>
+          <p className="mt-4 text-xs">
+            <Link
+              href="/login"
+              className="text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline"
+            >
+              Logga in
+            </Link>
+            <span className="text-muted-foreground"> (endast administratörer)</span>
+          </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
           {site.social.map((s) => {

@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminNewProjectPage() {
   const { isAdmin } = await getAuthState();
-  if (!isAdmin) redirect("/login");
+  if (!isAdmin) redirect("/ingen-admin");
 
   const projects = await getDisplayProjects();
   return (

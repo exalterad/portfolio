@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { site } from "@/config/site";
 import type { AuthFormState } from "@/lib/form-state";
+import { getAuthState } from "@/lib/admin-auth";
 import { createSupabaseSessionClient } from "@/lib/supabase/server";
 
 async function requestOrigin(): Promise<string> {
@@ -41,7 +42,8 @@ export async function signInAction(_prev: AuthFormState, formData: FormData): Pr
     return { ok: false, error: "Kunde inte läsa session efter inloggning." };
   }
 
-  redirect("/");
+  const { isAdmin } = await getAuthState();
+  redirect(isAdmin ? "/" : "/ingen-admin");
 }
 
 export async function signUpAction(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
