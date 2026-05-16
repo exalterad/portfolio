@@ -13,43 +13,70 @@ import { SetupSection } from "@/components/sections/setup-section";
 import { SkillsSection } from "@/components/sections/skills-section";
 import { SocialSection } from "@/components/sections/social-section";
 import type { PortfolioAboutContent } from "@/lib/about";
+import type { PortfolioExperienceContent } from "@/lib/experience";
 import type { NavSessionUser } from "@/lib/auth-types";
+import type { GamingGame } from "@/lib/gaming";
 import type { PortfolioProject } from "@/lib/projects";
+import type { PortfolioSetupContent } from "@/lib/setup";
+import type { PortfolioSocialContent } from "@/lib/social";
+import type { PortfolioSkillsContent } from "@/lib/skills";
 
 type PortfolioShellProps = {
   projects: PortfolioProject[];
   about: PortfolioAboutContent;
-  steamPlaytimes?: Partial<Record<string, string>>;
+  experience: PortfolioExperienceContent;
   isAdmin?: boolean;
   isLoggedIn?: boolean;
   navUser?: NavSessionUser | null;
   supabaseConfigured?: boolean;
+  gamingMainGame: GamingGame;
+  gamingPodiumGames: [GamingGame, GamingGame, GamingGame];
+  gamingLibraryCount?: number;
+  setup: PortfolioSetupContent;
+  social: PortfolioSocialContent;
+  skills: PortfolioSkillsContent;
 };
 
 export function PortfolioShell({
   projects,
   about,
-  steamPlaytimes = {},
+  experience,
   isAdmin = false,
   isLoggedIn = false,
   navUser = null,
   supabaseConfigured = false,
+  gamingMainGame,
+  gamingPodiumGames,
+  gamingLibraryCount = 0,
+  setup,
+  social,
+  skills,
 }: PortfolioShellProps) {
   return (
     <PortfolioPageFrame>
       <SiteNavbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} navUser={navUser} />
       <main className="flex-1 w-full">
-        <HeroSection />
+        <HeroSection socialLinks={social.links} />
         <AboutSection content={about} isAdmin={isAdmin} supabaseConfigured={supabaseConfigured} />
-        <ExperienceTimelineSection />
-        <GamingSection steamPlaytimes={steamPlaytimes} />
-        <SetupSection />
-        <SocialSection />
-        <SkillsSection />
+        <ExperienceTimelineSection
+          content={experience}
+          isAdmin={isAdmin}
+          supabaseConfigured={supabaseConfigured}
+        />
+        <GamingSection
+          mainGame={gamingMainGame}
+          podiumGames={gamingPodiumGames}
+          libraryCount={gamingLibraryCount}
+          isAdmin={isAdmin}
+          supabaseConfigured={supabaseConfigured}
+        />
+        <SetupSection content={setup} isAdmin={isAdmin} supabaseConfigured={supabaseConfigured} />
+        <SocialSection content={social} isAdmin={isAdmin} supabaseConfigured={supabaseConfigured} />
+        <SkillsSection content={skills} isAdmin={isAdmin} supabaseConfigured={supabaseConfigured} />
         <ProjectsSection projects={projects} isAdmin={isAdmin} supabaseConfigured={supabaseConfigured} />
         <ContactSection />
       </main>
-      <SiteFooter />
+      <SiteFooter socialLinks={social.links} />
     </PortfolioPageFrame>
   );
 }

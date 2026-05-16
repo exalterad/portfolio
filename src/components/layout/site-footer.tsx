@@ -3,6 +3,8 @@ import { FaDiscord, FaGithub, FaInstagram, FaSteam, FaTwitch } from "react-icons
 import { SiTiktok } from "react-icons/si";
 
 import { site } from "@/config/site";
+import type { SocialLink } from "@/lib/social";
+import { getStaticSocial } from "@/lib/social-store";
 
 const iconMap = {
   discord: FaDiscord,
@@ -13,7 +15,12 @@ const iconMap = {
   twitch: FaTwitch,
 } as const;
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  socialLinks?: SocialLink[];
+};
+
+export function SiteFooter({ socialLinks }: SiteFooterProps) {
+  const links = socialLinks ?? getStaticSocial().links;
   const year = new Date().getFullYear();
   return (
     <footer className="shrink-0 border-t border-white/10 bg-black/20 py-10">
@@ -33,11 +40,11 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
-          {site.social.map((s) => {
+          {links.map((s) => {
             const Icon = iconMap[s.icon as keyof typeof iconMap];
             return (
               <Link
-                key={s.name}
+                key={s.id}
                 href={s.href}
                 target="_blank"
                 rel="noreferrer"

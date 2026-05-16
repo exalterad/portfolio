@@ -3,11 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import type { GamingSettingsSection } from "@/config/gaming-games";
+import type { GamingSettingsSection } from "@/lib/gaming-schema";
 import { site } from "@/config/site";
 import { CrosshairPreviewGrid } from "@/components/gaming/crosshair-preview-grid";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getGameBySlug, getGameSlugs } from "@/lib/gaming";
+import { getAllResolvableSlugs, resolveGameBySlug } from "@/lib/gaming";
 import { getSteamPlaytimeBySlug } from "@/lib/steam-playtime";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -99,12 +99,13 @@ function GamingSettingsCard({ section }: { section: GamingSettingsSection }) {
 export const revalidate = 600;
 
 export async function generateStaticParams() {
-  return getGameSlugs().map((slug) => ({ slug }));
+  const slugs = await getAllResolvableSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const game = getGameBySlug(slug);
+  const game = await resolveGameBySlug(slug);
   if (!game) return { title: "Spel" };
   return {
     title: `${game.title} · Gaming · ${site.name}`,
@@ -119,7 +120,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function GamingGamePage({ params }: PageProps) {
   const { slug } = await params;
-  const game = getGameBySlug(slug);
+  const game = await resolveGameBySlug(slug);
   if (!game) notFound();
 
   const steamPlaytimes = await getSteamPlaytimeBySlug();

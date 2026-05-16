@@ -1,18 +1,20 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
-import { Loader2, Send } from "lucide-react";
+import { useActionState, useEffect, useRef, useState, startTransition, type FormEvent } from "react";
+import { Clock, Loader2, Send } from "lucide-react";
 
 import { submitContact } from "@/app/actions/contact";
 import { contactInitialState } from "@/lib/form-state";
+import { parseContactForm, type ContactFieldErrors } from "@/lib/contact-validation";
 import { site } from "@/config/site";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { cn } from "@/lib/utils";
+
+const { eyebrow, heading, intro, body } = site.contact;
 
 function FieldError({ messages }: { messages?: string[] }) {
   if (!messages?.length) return null;
@@ -21,105 +23,166 @@ function FieldError({ messages }: { messages?: string[] }) {
 
 export function ContactSection() {
   const [state, formAction, pending] = useActionState(submitContact, contactInitialState);
+  const [clientErrors, setClientErrors] = useState<ContactFieldErrors | undefined>();
+  const [clientMessage, setClientMessage] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
+  const fieldErrors = state.fieldErrors ?? clientErrors;
+  const statusMessage = state.message || clientMessage;
+  const showStatus = Boolean(statusMessage);
+
   useEffect(() => {
-    if (state.ok) formRef.current?.reset();
+    if (state.ok) {
+      formRef.current?.reset();
+      setClientErrors(undefined);
+      setClientMessage("");
+    }
   }, [state.ok]);
 
-  return (
-    <section id="contact" className="relative scroll-mt-24 border-t border-white/10 py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_min(22rem,100%)] lg:items-start lg:gap-14 xl:grid-cols-[minmax(0,1.15fr)_min(24rem,100%)]">
-          <ScrollReveal className="text-left">
-            <p className="text-xs font-medium tracking-[0.35em] text-violet-300/90 uppercase">
-              {site.contact.eyebrow}
-            </p>
-            <h2 className="mt-3 font-[family-name:var(--font-orbitron)] text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              {site.contact.title}
-            </h2>
-            <div className="mt-6 space-y-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {site.contact.body.map((paragraph, idx) => (
-                <p key={idx}>{paragraph}</p>
-              ))}
-            </div>
-            <p className="mt-8 text-sm text-muted-foreground">
-              Direktmejl:{" "}
-              <a href={`mailto:${site.email}`} className="text-primary underline-offset-4 hover:underline">
-                {site.email}
-              </a>
-            </p>
-          </ScrollReveal>
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const result = parseContactForm({
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      message: String(formData.get("message") ?? ""),
+    });
 
-          <ScrollReveal delay={0.08} className="w-full lg:max-w-md lg:justify-self-end">
-            <Card className="glass-panel border-white/10 bg-white/[0.03] shadow-xl">
-              <CardHeader className="text-left">
-                <CardTitle className="text-lg">Kontaktformulär</CardTitle>
-                <CardDescription>Fyll i fälten så återkommer jag via e-post.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form ref={formRef} action={formAction} className="space-y-5">
+    if (!result.ok) {
+      setClientErrors(result.fieldErrors);
+      setClientMessage("Fyll i alla obligatoriska fält.");
+      return;
+    }
+
+    setClientErrors(undefined);
+    setClientMessage("");
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
+
+  return (
+    <section id="contact" className="relative scroll-mt-24 py-20 sm:py-28">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <ScrollReveal>
+          <p className="text-xs font-medium tracking-[0.35em] text-violet-300/90 uppercase">{eyebrow}</p>
+          <h2 className="mt-3 font-[family-name:var(--font-orbitron)] text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            {heading.before}
+            <span className="text-gradient">{heading.accent}</span>
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{intro}</p>
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.08} className="mt-12 sm:mt-14">
+          <div className="glass-panel relative overflow-hidden rounded-3xl border border-white/15 bg-white/[0.04] shadow-[0_0_56px_rgba(168,85,247,0.16),0_0_100px_rgba(34,211,238,0.08)] ring-1 ring-white/[0.06]">
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-violet-500/50 via-cyan-400/40 to-transparent"
+              aria-hidden
+            />
+            <div className="grid lg:grid-cols-12">
+              <aside className="border-b border-white/10 p-8 sm:p-10 lg:col-span-5 lg:border-b-0 lg:border-r lg:p-12">
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] px-5 py-4">
+                  <Clock className="mt-0.5 size-4 shrink-0 text-cyan-300/80" aria-hidden />
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Jag svarar så snart jag hunnit läsa ordentligt — oftast inom några timmar.
+                  </p>
+                </div>
+
+                <ul className="mt-8 space-y-6">
+                  {body.map((paragraph, idx) => (
+                    <li
+                      key={idx}
+                      className="border-l-2 border-violet-500/35 pl-4 text-sm leading-relaxed text-muted-foreground sm:text-base"
+                    >
+                      {paragraph}
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+
+              <div className="p-8 sm:p-10 lg:col-span-7 lg:p-12">
+                <p className="text-xs font-medium tracking-[0.35em] text-cyan-300/80 uppercase">Meddelande</p>
+                <form ref={formRef} noValidate onSubmit={handleSubmit} className="mt-6 space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="contact-name">Namn</Label>
+                    <Label htmlFor="contact-name">
+                      Namn <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="contact-name"
                       name="name"
                       required
+                      aria-required="true"
                       autoComplete="name"
                       placeholder="Ditt namn"
-                      aria-invalid={Boolean(state.fieldErrors?.name?.length)}
-                      className="h-10 bg-background/50 md:h-11"
+                      aria-invalid={Boolean(fieldErrors?.name?.length)}
+                      className={cn(
+                        "h-12 border-white/10 bg-background/50 text-base",
+                        fieldErrors?.name?.length && "border-destructive/50",
+                      )}
                     />
-                    <FieldError messages={state.fieldErrors?.name} />
+                    <FieldError messages={fieldErrors?.name} />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="contact-email">E-post</Label>
+                    <Label htmlFor="contact-email">
+                      E-post <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="contact-email"
                       name="email"
                       type="email"
                       required
+                      aria-required="true"
                       autoComplete="email"
                       placeholder="du@exempel.se"
-                      aria-invalid={Boolean(state.fieldErrors?.email?.length)}
-                      className="h-10 bg-background/50 md:h-11"
+                      aria-invalid={Boolean(fieldErrors?.email?.length)}
+                      className={cn(
+                        "h-12 border-white/10 bg-background/50 text-base",
+                        fieldErrors?.email?.length && "border-destructive/50",
+                      )}
                     />
-                    <FieldError messages={state.fieldErrors?.email} />
+                    <FieldError messages={fieldErrors?.email} />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="contact-message">Meddelande</Label>
+                    <Label htmlFor="contact-message">
+                      Meddelande <span className="text-destructive">*</span>
+                    </Label>
                     <Textarea
                       id="contact-message"
                       name="message"
                       required
-                      rows={5}
+                      aria-required="true"
+                      rows={6}
                       placeholder="Hej Alexander…"
-                      aria-invalid={Boolean(state.fieldErrors?.message?.length)}
-                      className="min-h-32 resize-y bg-background/50"
+                      aria-invalid={Boolean(fieldErrors?.message?.length)}
+                      className={cn(
+                        "min-h-40 resize-y border-white/10 bg-background/50 text-base",
+                        fieldErrors?.message?.length && "border-destructive/50",
+                      )}
                     />
-                    <FieldError messages={state.fieldErrors?.message} />
+                    <FieldError messages={fieldErrors?.message} />
                   </div>
 
-                  {state.message ? (
+                  {showStatus ? (
                     <p
                       role="status"
                       className={cn(
                         "rounded-lg border px-3 py-2 text-sm",
                         state.ok
                           ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-100"
-                          : "border-destructive/40 bg-destructive/10 text-destructive-foreground"
+                          : "border-destructive/40 bg-destructive/10 text-destructive-foreground",
                       )}
                     >
-                      {state.message}
+                      {statusMessage}
                     </p>
                   ) : null}
 
                   <Button
                     type="submit"
                     disabled={pending}
-                    className="h-10 w-full rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 font-semibold text-slate-950 shadow-[0_0_28px_rgba(168,85,247,0.35)] hover:brightness-110 disabled:opacity-60 sm:h-11"
+                    className="h-12 w-full rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 text-base font-semibold text-slate-950 shadow-[0_0_32px_rgba(168,85,247,0.4)] hover:brightness-110 disabled:opacity-60"
                   >
                     {pending ? (
                       <>
@@ -134,10 +197,10 @@ export function ContactSection() {
                     )}
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
-          </ScrollReveal>
-        </div>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

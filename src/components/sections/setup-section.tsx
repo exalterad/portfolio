@@ -1,19 +1,23 @@
-import { ExternalLink } from "lucide-react";
+"use client";
 
-import { site } from "@/config/site";
+import Link from "next/link";
+import { ExternalLink, Pencil } from "lucide-react";
+
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import type { PortfolioSetupContent, SetupItem } from "@/lib/setup";
 import { cn } from "@/lib/utils";
 
-function SetupItemCard({
-  label,
-  value,
-  href,
-}: {
-  label: string;
-  value: string;
-  href?: string;
-}) {
+function linkLabel(href: string): string {
+  try {
+    return new URL(href).hostname.replace(/^www\./, "");
+  } catch {
+    return "extern sida";
+  }
+}
+
+function SetupItemCard({ label, value, href }: Pick<SetupItem, "label" | "value" | "href">) {
   const card = (
     <Card
       className={cn(
@@ -50,39 +54,76 @@ function SetupItemCard({
       target="_blank"
       rel="noopener noreferrer"
       className="group/card block h-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-      title="Öppna hos Inet (ny flik)"
-      aria-label={`Visa ${label} på Inet`}
+      title={`Öppna ${linkLabel(href)} (ny flik)`}
+      aria-label={`Visa ${label} på ${linkLabel(href)}`}
     >
       {card}
     </a>
   );
 }
 
-export function SetupSection() {
+type SetupSectionProps = {
+  content: PortfolioSetupContent;
+  isAdmin?: boolean;
+  supabaseConfigured?: boolean;
+};
+
+export function SetupSection({ content, isAdmin = false, supabaseConfigured = false }: SetupSectionProps) {
   return (
     <section id="setup" className="relative scroll-mt-24 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <ScrollReveal>
-          <p className="text-xs font-medium tracking-[0.35em] text-fuchsia-300/90 uppercase">Setup</p>
-          <h2 className="mt-3 font-[family-name:var(--font-orbitron)] text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            {site.setup.title}
-          </h2>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium tracking-[0.35em] text-fuchsia-300/90 uppercase">Setup</p>
+              <h2 className="mt-3 font-[family-name:var(--font-orbitron)] text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                {content.title}
+              </h2>
+            </div>
+            {isAdmin ? (
+              supabaseConfigured ? (
+                <Link
+                  href="/admin/setup/redigera"
+                  title="Redigera Setup"
+                  aria-label="Redigera Setup"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "icon" }),
+                    "shrink-0 cursor-pointer rounded-xl border-white/15 bg-white/5 text-foreground shadow-[0_0_20px_rgba(168,85,247,0.12)] hover:border-primary/40 hover:bg-white/10",
+                  )}
+                >
+                  <Pencil className="size-5" strokeWidth={2.25} />
+                </Link>
+              ) : (
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  title="Konfigurera Supabase för att spara"
+                  disabled
+                  className="shrink-0 cursor-not-allowed rounded-xl border-white/15 bg-white/5 text-foreground opacity-40"
+                  aria-label="Redigera Setup (inaktiverat)"
+                >
+                  <Pencil className="size-5" strokeWidth={2.25} />
+                </Button>
+              )
+            ) : null}
+          </div>
         </ScrollReveal>
 
         <ScrollReveal delay={0.06} className="mt-12 grid gap-4 sm:grid-cols-2">
-          {site.setup.specs.map((s) => (
-            <SetupItemCard key={s.label} label={s.label} value={s.value} href={s.href} />
+          {content.specs.map((s) => (
+            <SetupItemCard key={s.id} label={s.label} value={s.value} href={s.href} />
           ))}
         </ScrollReveal>
 
         <ScrollReveal className="mt-20 border-t border-white/10 pt-16">
           <p className="text-xs font-medium tracking-[0.35em] text-cyan-300/90 uppercase">Perifer</p>
           <h3 className="mt-3 font-[family-name:var(--font-orbitron)] text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            {site.setup.peripherals.title}
+            {content.peripherals.title}
           </h3>
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {site.setup.peripherals.items.map((s) => (
-              <SetupItemCard key={s.label} label={s.label} value={s.value} href={s.href} />
+            {content.peripherals.items.map((s) => (
+              <SetupItemCard key={s.id} label={s.label} value={s.value} href={s.href} />
             ))}
           </div>
         </ScrollReveal>

@@ -176,7 +176,7 @@ export function ProjectWizard({ mode, projects, supabaseConfigured, initialProje
         setError(res.error);
         return;
       }
-      router.push("/#projects");
+      router.push(mode === "create" ? "/admin/projekt/redigera" : "/#projects");
       router.refresh();
     });
   }
@@ -191,7 +191,7 @@ export function ProjectWizard({ mode, projects, supabaseConfigured, initialProje
         setError(res.error);
         return;
       }
-      router.push("/#projects");
+      router.push("/admin/projekt/redigera");
       router.refresh();
     });
   }
@@ -209,14 +209,14 @@ export function ProjectWizard({ mode, projects, supabaseConfigured, initialProje
         <ScrollReveal>
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <Link
-              href="/#projects"
+              href="/admin/projekt/redigera"
               className={cn(
                 buttonVariants({ variant: "ghost", size: "sm" }),
                 "inline-flex gap-2 text-muted-foreground hover:text-foreground",
               )}
             >
               <ArrowLeft className="size-4" aria-hidden />
-              Tillbaka till projekt
+              Tillbaka till projektöversikt
             </Link>
             {!supabaseConfigured ? (
               <p className="text-sm text-amber-200/90">
@@ -226,15 +226,20 @@ export function ProjectWizard({ mode, projects, supabaseConfigured, initialProje
           </div>
 
           <div className="mb-8">
-            <p className="text-xs font-medium tracking-[0.35em] text-fuchsia-300/90 uppercase">
-              {mode === "create" ? "Nytt projekt" : "Redigera projekt"}
-            </p>
+            <p className="text-xs font-medium tracking-[0.35em] text-violet-300/90 uppercase">Admin</p>
             <h1 className="mt-3 font-[family-name:var(--font-orbitron)] text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Bygg ut <span className="text-gradient">projektkortet</span>
+              {mode === "create" ? (
+                <>
+                  Nytt <span className="text-gradient">projekt</span>
+                </>
+              ) : (
+                <>
+                  Redigera <span className="text-gradient">projekt</span>
+                </>
+              )}
             </h1>
-            <p className="mt-4 max-w-2xl text-muted-foreground leading-relaxed">
-              Svara steg för steg — samma uppgifter som tidigare i dialogrutan, men med tydligare frågor och samma look
-              som resten av sidan.
+            <p className="mt-4 max-w-2xl leading-relaxed text-muted-foreground">
+              Gå igenom stegen — namn, pitch, bild, länkar och text. Samma design som övriga admin-sidor.
             </p>
           </div>
 

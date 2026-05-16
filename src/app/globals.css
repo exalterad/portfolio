@@ -136,6 +136,11 @@
   button:disabled {
     cursor: not-allowed;
   }
+
+  /* Native <select>-listor: undvik vit text på vit bakgrund i mörkt tema (särskilt Windows). */
+  .dark select {
+    color-scheme: dark;
+  }
 }
 
 .glass-panel {

@@ -1,47 +1,26 @@
-/** Spel i Gaming-sektionen + detaljsidor under /gaming/[slug]. Redigera fritt. */
+/** Spel i Gaming-sektionen + detaljsidor under /gaming/[slug]. Standarddata — admin kan spara över i Supabase. */
 
-export type GamingSettingRow = {
-  label: string;
-  value: string;
-};
+export type {
+  GamingGame,
+  GamingPreviewImage,
+  GamingSettingRow,
+  GamingSettingsSection,
+} from "@/lib/gaming-schema";
 
-/** Förhandsbilder (t.ex. crosshair). Vid `copyCommand` kopieras texten till urklipp vid klick. */
-export type GamingPreviewImage = {
-  image: string;
-  alt: string;
-  copyCommand?: string;
-  /** Ram + etikett för det du t.ex. kör mest (max ett per rutnät rekommenderas). */
-  highlight?: boolean;
-  /** Text på highlight-märket. Standard: "Mest använt". */
-  highlightLabel?: string;
-};
+import type { GamingGame } from "@/lib/gaming-schema";
 
-export type GamingSettingsSection = {
-  id: string;
-  title: string;
-  rows: GamingSettingRow[];
-  /** Valfritt rutnät med bilder ovanför tabellen (t.ex. olika crosshair-varianter). */
-  previewGrid?: GamingPreviewImage[];
-};
-
-export type GamingGame = {
-  slug: string;
-  title: string;
-  tagline: string;
-  summary: string;
-  /** Kort etikett på kortet (t.ex. rank eller “Huvudspel”) */
-  previewBadge: string;
-  image: string;
-  imageAlt: string;
-  tags: string[];
-  /** Steam store app-id — hämtar speltid via Web API om STEAM_WEB_API_KEY + STEAM_ID finns. */
-  steamAppId?: number;
-  /** Total speltid på gaming-kortet under titeln (reserv om Steam saknas). */
-  playtime: string;
-  /** Valfri rad som hero (Status / Age / Base): tre kolumner med label + stort värde. */
-  heroStats?: { label: string; value: string }[];
-  settingsSections: GamingSettingsSection[];
-};
+/** Standardlayout om inget sparats i Supabase än. */
+export const gamingLayout = {
+  mainGameSlug: "counter-strike-2",
+  /** Podium: index 0 = #1 (mitten), 1 = #2 (vänster), 2 = #3 (höger). */
+  top3Slugs: ["red-dead-redemption-2", "hogwarts-legacy", "a-way-out"],
+  /** Fyller /gaming med fler titlar från Steam (STEAM_WEB_API_KEY + STEAM_ID). */
+  steamLibrary: {
+    maxGames: 12,
+    /** Minsta speltid (minuter) för att synas i biblioteket. */
+    minPlaytimeMinutes: 30,
+  },
+} as const;
 
 export const gamingGames: GamingGame[] = [
   {

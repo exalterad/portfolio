@@ -166,14 +166,22 @@ export const site = {
     },
   },
   social: [
-    { name: "Discord", href: "https://discord.com/", icon: "discord" },
-    { name: "Instagram", href: "https://instagram.com/", icon: "instagram" },
+    { name: "Discord", href: "https://discord.com", icon: "discord", handle: "enkan" },
+    {
+      name: "Instagram",
+      href: "https://www.instagram.com/alexander.engbergg",
+      icon: "instagram",
+    },
     { name: "TikTok", href: "https://www.tiktok.com/@1enkan", icon: "tiktok" },
     { name: "GitHub", href: "https://github.com/exalterad", icon: "github" },
     { name: "Steam", href: "https://steamcommunity.com/id/enk4n", icon: "steam" },
     { name: "Twitch", href: "https://www.twitch.tv/enk4n", icon: "twitch" },
   ] as const,
   skills: {
+    eyebrow: "Skills",
+    heading: { before: "Tech stack & ", accent: "craft" },
+    description:
+      "Språk, ramverk och verktyg jag använder i hobbyprojekt och skola — från UI till databas och deploy.",
     /** Grupper med etikett + lista — redigera fritt. */
     groups: [
       {
@@ -195,11 +203,12 @@ export const site = {
     ],
   },
   contact: {
-    title: "Säg hej",
     eyebrow: "Kontakt",
-    body: [
+    heading: { before: "Säg ", accent: "hej" },
+    intro:
       "Vill du nå mig om samarbete, frågor, en idé du vill bolla eller bara snacka tech och gaming? Jag läser allt som dyker upp och återkommer så fort jag hunnit svara ordentligt.",
-      "Skriv gärna kort vad det gäller — till exempel om det handlar om projekt, stream, kod, setup eller något helt annat — så blir det enklare för mig att förbereda ett vettigt svar. Om du hellre vill mejla direkt går det lika bra; adressen finns också här intill.",
+    body: [
+      "Skriv gärna kort vad det gäller — till exempel om det handlar om projekt, stream, kod, setup eller något helt annat — så blir det enklare för mig att förbereda ett vettigt svar.",
       "Jag gillar nyfikenhet, tydliga frågor och när folk vågar nätverka utan onödig jargon. Oavsett om du är nyfiken på något du sett på sidan, vill diskutera hårdvara eller bara vill säga hej efter en bra rond i CS2: tack för att du hör av dig.",
     ],
   },

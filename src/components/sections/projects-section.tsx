@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { ArrowUpRight, Pencil } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -33,27 +33,27 @@ export function ProjectsSection({ projects, isAdmin = false, supabaseConfigured 
             {isAdmin ? (
               supabaseConfigured ? (
                 <Link
-                  href="/admin/projekt/ny"
-                  title="Lägg till projekt"
-                  aria-label="Lägg till projekt"
+                  href="/admin/projekt/redigera"
+                  title="Redigera Projekt"
+                  aria-label="Redigera Projekt"
                   className={cn(
                     buttonVariants({ variant: "outline", size: "icon" }),
                     "shrink-0 cursor-pointer rounded-xl border-white/15 bg-white/5 text-foreground shadow-[0_0_20px_rgba(168,85,247,0.12)] hover:border-primary/40 hover:bg-white/10",
                   )}
                 >
-                  <Plus className="size-5" strokeWidth={2.25} />
+                  <Pencil className="size-5" strokeWidth={2.25} />
                 </Link>
               ) : (
                 <Button
                   type="button"
                   size="icon"
                   variant="outline"
-                  title="Konfigurera Supabase för att spara"
+                  title="Supabase saknas — kan inte redigera"
                   disabled
-                  className="shrink-0 cursor-not-allowed rounded-xl border-white/15 bg-white/5 text-foreground opacity-40"
-                  aria-label="Lägg till projekt (inaktiverat)"
+                  className="shrink-0 rounded-xl border-white/15 bg-white/5 opacity-60"
+                  aria-label="Supabase saknas — kan inte redigera"
                 >
-                  <Plus className="size-5" strokeWidth={2.25} />
+                  <Pencil className="size-5" strokeWidth={2.25} />
                 </Button>
               )
             ) : null}

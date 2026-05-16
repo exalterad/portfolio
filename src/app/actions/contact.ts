@@ -1,18 +1,7 @@
 "use server";
 
-import { z } from "zod";
-
 import type { ContactState } from "@/lib/form-state";
-
-const contactSchema = z.object({
-  name: z.string().trim().min(1, "Ange ditt namn").max(120),
-  email: z.string().trim().email("Ogiltig e-postadress"),
-  message: z
-    .string()
-    .trim()
-    .min(10, "Skriv minst några meningar (minst 10 tecken)")
-    .max(5000),
-});
+import { parseContactForm } from "@/lib/contact-validation";
 
 /**
  * Skickar meddelande via [Web3Forms](https://web3forms.com) om `WEB3FORMS_ACCESS_KEY` finns i `.env.local`.
@@ -25,13 +14,12 @@ export async function submitContact(_prev: ContactState, formData: FormData): Pr
     message: String(formData.get("message") ?? ""),
   };
 
-  const parsed = contactSchema.safeParse(raw);
-  if (!parsed.success) {
-    const fieldErrors = parsed.error.flatten().fieldErrors as ContactState["fieldErrors"];
+  const parsed = parseContactForm(raw);
+  if (!parsed.ok) {
     return {
       ok: false,
-      message: "Kontrollera fälten och försök igen.",
-      fieldErrors,
+      message: "Fyll i alla obligatoriska fält.",
+      fieldErrors: parsed.fieldErrors,
     };
   }
 

@@ -8,6 +8,7 @@ import { SiTiktok } from "react-icons/si";
 
 import { site } from "@/config/site";
 import { buttonVariants } from "@/components/ui/button";
+import type { SocialLink } from "@/lib/social";
 import { cn } from "@/lib/utils";
 
 const socialIcons = {
@@ -21,10 +22,14 @@ const socialIcons = {
 
 const heroSocialOrder = ["github", "discord", "instagram", "tiktok", "steam", "twitch"] as const;
 
-export function HeroSection() {
+type HeroSectionProps = {
+  socialLinks: SocialLink[];
+};
+
+export function HeroSection({ socialLinks }: HeroSectionProps) {
   const heroLinks = heroSocialOrder
-    .map((key) => site.social.find((s) => s.icon === key))
-    .filter(Boolean) as (typeof site.social)[number][];
+    .map((key) => socialLinks.find((s) => s.icon === key))
+    .filter(Boolean) as SocialLink[];
 
   return (
     <section
